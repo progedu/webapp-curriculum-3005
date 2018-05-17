@@ -1,10 +1,17 @@
-object TenThousandNamePrinter extends App {
+import java.util.concurrent.Executors
 
-  for (i <- 1 to 10000) {
-    new Thread(() => {
-      Thread.sleep(1000)
-      println(Thread.currentThread().getName)
-    }).start()
+object TenThousandNamePrinter extends App {
+  val executors = Executors.newFixedThreadPool(10);
+
+  val futures = for (i <- 1 to 10000) yield {
+    executors.submit(new Runnable {
+      override def run(): Unit = {
+        Thread.sleep(1000)
+        println(Thread.currentThread().getName)
+      }
+    })
   }
 
+  futures.foreach(f => f.get())
+  executors.shutdown()
 }
