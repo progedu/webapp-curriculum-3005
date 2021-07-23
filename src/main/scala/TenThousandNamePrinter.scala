@@ -1,10 +1,12 @@
+import java.util.concurrent.Executors
+
 object TenThousandNamePrinter extends App {
+  val es = Executors.newFixedThreadPool(100)
 
   for (i <- 1 to 10000) {
-    new Thread(() => {
-      Thread.sleep(1000)
-      println(Thread.currentThread().getName)
-    }).start()
+    es.submit(new Runnable {
+      override def run(): Unit = println(Thread.currentThread().getName)
+    })
   }
-
+  es.shutdownNow()
 }
